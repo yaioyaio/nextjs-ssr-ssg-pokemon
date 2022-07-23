@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { PokemonDetails } from "../../src/types/pokemonDetail";
 import styles from "../../styles/Details.module.css";
 
-export default function Details() {
+const Details = () => {
   const {
     query: { id },
   } = useRouter();
@@ -72,4 +72,5 @@ export default function Details() {
       </div>
     </div>
   );
-}
+};
+export default Details;
