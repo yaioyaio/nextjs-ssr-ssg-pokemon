@@ -1,26 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
 
-import type { NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useState } from "react";
 import { Pokemon } from "../src/types/pokemon";
 import styles from "../styles/Home.module.css";
 
-const Home: NextPage = () => {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const resp = await fetch(
+    "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
+  );
 
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
-      );
-      setPokemons(await resp.json());
-    }
-    getPokemon();
-  }, []);
+  return {
+    props: {
+      pokemons: await resp.json(),
+    },
+  };
+};
 
+type Props = {
+  pokemons: Pokemon[];
+};
+const Home = ({ pokemons }: Props) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -28,7 +29,7 @@ const Home: NextPage = () => {
       </Head>
       <h2>Pokemon List</h2>
       <div className={styles.grid}>
-        {pokemons.map((pokemon: Pokemon) => (
+        {pokemons.slice(0, 10).map((pokemon: Pokemon) => (
           <div className={styles.card} key={pokemon.id}>
             <Link href={`/pokemon/${pokemon.id}`}>
               <a>
@@ -41,9 +42,6 @@ const Home: NextPage = () => {
             </Link>
           </div>
         ))}
-      </div>
-      <div>
-        <pre>{JSON.stringify(pokemons)}</pre>
       </div>
     </div>
   );

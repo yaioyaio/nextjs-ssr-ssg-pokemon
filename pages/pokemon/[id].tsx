@@ -1,36 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useEffect } from "react";
 import { PokemonDetails } from "../../src/types/pokemonDetail";
 import styles from "../../styles/Details.module.css";
 
-const Details = () => {
-  const {
-    query: { id },
-  } = useRouter();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { params } = context;
+  const resp = await fetch(
+    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+  );
 
-  const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
+  return {
+    props: {
+      pokemon: await resp.json(),
+    },
+  };
+};
 
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
-      );
-      setPokemon(await resp.json());
-    }
-    if (id) {
-      getPokemon();
-    }
-  }, [id]);
+type Props = {
+  pokemon: PokemonDetails;
+};
 
-  if (!pokemon) {
-    return null;
-  }
-
+const Details = ({ pokemon }: Props) => {
   return (
     <div>
       <Head>
