@@ -9,7 +9,7 @@ import styles from "../../styles/Details.module.css";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
   const resp = await fetch(
-    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params?.id}.json`
   );
 
   return {
