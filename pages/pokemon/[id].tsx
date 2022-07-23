@@ -1,12 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { Pokemon } from "../../src/types/pokemon";
 import { PokemonDetails } from "../../src/types/pokemonDetail";
 import styles from "../../styles/Details.module.css";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const resp = await fetch(
+    "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
+  );
+
+  const pokemons = await resp.json();
+
+  return {
+    paths: pokemons.map((pokemon: Pokemon) => ({
+      params: { id: pokemon.id.toString() },
+    })),
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
   const { params } = context;
   const resp = await fetch(
     `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params?.id}.json`
