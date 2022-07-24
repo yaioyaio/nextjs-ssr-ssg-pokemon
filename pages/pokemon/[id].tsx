@@ -28,9 +28,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
     `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params?.id}.json`
   );
 
+  const data = await resp.json();
   return {
     props: {
-      pokemon: await resp.json(),
+      pokemon: data,
     },
     revalidate: 30,
   };
